@@ -27,11 +27,11 @@ public class PracticalTest01Var09MainActivity extends AppCompatActivity {
     private Button add_button;
     private Button compute_button;
     private ButtonListener buttonListener;
-    int saved_sum = 0;
+    String saved_sum;
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        saved_sum = savedInstanceState.getInt("sum");
+        saved_sum = savedInstanceState.getString("sum");
         Toast.makeText(this, "Returned with OK.\nThe sum is: " + savedInstanceState.getString("sum"), Toast.LENGTH_LONG).show();
 
     }
@@ -39,7 +39,7 @@ public class PracticalTest01Var09MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("sum", saved_sum);
+        savedInstanceState.putString("sum", saved_sum);
     }
 
     private class ButtonListener implements View.OnClickListener {
@@ -96,7 +96,7 @@ public class PracticalTest01Var09MainActivity extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         Bundle extras = data.getExtras();
-                        saved_sum = Integer.valueOf(extras.getString("sum"));
+                        saved_sum = (extras.getString("sum"));
                         Toast.makeText(this, "Returned with OK.\nThe sum is: " + extras.getString("sum"), Toast.LENGTH_LONG).show();
                     }
                 }
