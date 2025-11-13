@@ -29,6 +29,17 @@ public class PracticalTest01Var09MainActivity extends AppCompatActivity {
     private ButtonListener buttonListener;
     String saved_sum;
 
+    private MeanBroadcastReceiver meanBroadcastReceiver = new MeanBroadcastReceiver();
+    private IntentFilter intentFilter = new IntentFilter();
+
+    public class MeanBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle data = intent.getExtras();
+            Log.d("RANDOM_TAG", data.getString("broadcast"));
+        }
+    }
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         saved_sum = savedInstanceState.getString("sum");
@@ -61,8 +72,10 @@ public class PracticalTest01Var09MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private ActivityResultLauncher<Intent> secondActivityLauncher;
     private SwitchActivityButtonListener switchActivityButtonListener = new SwitchActivityButtonListener();
+
     private class SwitchActivityButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -73,6 +86,13 @@ public class PracticalTest01Var09MainActivity extends AppCompatActivity {
                 secondActivityLauncher.launch(intent);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Intent intent = new Intent(this, PracticalTest01Service.class);
+        stopService(intent);
+        super.onDestroy();
     }
 
     @Override
@@ -98,15 +118,25 @@ public class PracticalTest01Var09MainActivity extends AppCompatActivity {
                         Bundle extras = data.getExtras();
                         saved_sum = (extras.getString("sum"));
                         Toast.makeText(this, "Returned with OK.\nThe sum is: " + extras.getString("sum"), Toast.LENGTH_LONG).show();
+                        if (Integer.parseInt(saved_sum) > 10) {
+                            Intent intent = new Intent(getApplicationContext(), PracticalTest01Service.class);
+                            intent.putExtra("broadcast", saved_sum);
+                            startService(intent);
+                        }
                     }
                 }
         );
         compute_button.setOnClickListener(switchActivityButtonListener);
+        intentFilter.addAction("my_intent");
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(meanBroadcastReceiver, intentFilter);
+    }
+
 }
-
-
-
 
 
 
